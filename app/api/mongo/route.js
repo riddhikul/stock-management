@@ -1,29 +1,28 @@
 import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
-// const { MongoClient } = require("mongodb");
 
 export async function GET(request) {
-    return NextResponse.json({"a":34})
-}
 
-// Replace the uri string with your connection string.
-const uri = "mongodb+srv://mongodb:BFbW8jrjZyKbuHRx@cluster0.h38by39.mongodb.net/";
+const uri = "mongodb+srv://mongodb:wXErcQgDHoI9OfAW@cluster0.h38by39.mongodb.net/?retryWrites=true&w=majority";
 
-const client = new MongoClient(uri);
+  const client = new MongoClient(uri);
 
-async function run() {
   try {
-    const database = client.db('');
-    const movies = database.collection('movies');
+    await client.connect(); // Connect to the MongoDB server
 
-    // Query for a movie that has the title 'Back to the Future'
-    const query = { title: 'Back to the Future' };
-    const movie = await movies.findOne(query);
+    const database = client.db('RMango');
+    const collection = database.collection('Inventory'); // Corrected collection name
 
-    console.log(movie);
+    const query = {}; // You can add specific query conditions here if needed
+    const result = await collection.findOne(query);
+
+    console.log(result);
+    
+    return NextResponse.json(result); // Returning the result as JSON
+  } catch (error) {
+    console.error("Error:", error);
+    return NextResponse.error("An error occurred");
   } finally {
-    // Ensures that the client will close when you finish/error
     await client.close();
   }
 }
-run().catch(console.dir);
